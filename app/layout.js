@@ -1,4 +1,4 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Inter, Montserrat,Geist_Mono } from "next/font/google";
 import { 
   ClerkProvider, 
   SignInButton, 
@@ -7,7 +7,9 @@ import {
   UserButton
 } from '@clerk/nextjs';
 import "./globals.css";
+import Header from "@/components/Header";
 
+const inter = Montserrat ({ subsets: ['latin'] });
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -27,13 +29,11 @@ export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
       <html lang="en">
-        <body>
+        <body className={inter.className}>
           <SignedOut>
             <SignInButton />
           </SignedOut>
-          <SignedIn>
-            <UserButton />
-          </SignedIn>
+          <Header />
           {children}
         </body>
       </html>
