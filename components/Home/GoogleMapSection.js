@@ -1,22 +1,49 @@
-import React from 'react'
-import { GoogleMap, useJsApiLoader } from '@react-google-maps/api'
+import React, { useEffect } from 'react'
+import { GoogleMap, MarkerF, useJsApiLoader } from '@react-google-maps/api'
+import { sources } from 'next/dist/compiled/webpack/webpack';
+import { DestinationContext } from '@/context/DestinationContext';
 
 function GoogleMapSection() {
   const containerStyle = { 
     width: '100%', 
     height: window.innerWidth*0.45
   }; 
-  const center = { 
+  const [center,setCenter] = useState( { 
     lat:-3.745, 
     lng:-38.523
-  }; 
+   }); 
 
-  const { isLoaded } = useJsApiLoader({
-    id: 'google-map-script',
-    googleMapsApiKey: 'YOUR_API_KEY'//process.env.NEXT_PUBLIC_GOOGLE_API_KEY,
-  })
+
+//  const { isLoaded } = useJsApiLoader({
+ //   id: 'google-map-script',
+ //   googleMapsApiKey: 'YOUR_API_KEY'//process.env.NEXT_PUBLIC_GOOGLE_API_KEY,
+ // })
 
   const [map, setMap] = React.useState(null)
+  useEffect(()=> { 
+    if(sources ?.length!=[]&&map) { 
+     map.panTo (
+      { 
+        lat:sources.lat, 
+        lng:sources.lng
+       }
+     )
+      setCenter({ 
+      lat:sources.lat, 
+      lng:sources.lng
+     }) ; 
+
+    }
+  }, [source])
+
+  useEffect(()=> { 
+    if(destination?.length!=[]&&map) { 
+     setCenter({ 
+      lat:destination.lat, 
+      lng:destination.lng
+     }) 
+    }
+  }, [destination])
 
   const onLoad = React.useCallback(function callback(map) {
     // This is just an example of getting and using the map instance!!! don't just blindly copy!
@@ -30,7 +57,7 @@ function GoogleMapSection() {
     setMap(null)
   }, [])
 
-  return isLoaded ? (
+  return   (
     <GoogleMap
       mapContainerStyle={containerStyle}
       center={center}
@@ -39,12 +66,23 @@ function GoogleMapSection() {
       onUnmount={onUnmount}
       options={{mapId:'this is my id'}}
     >
-      {/* Child components, such as markers, info windows, etc. */}
-      <></>
+    {source.length!=[]? <MarkerF
+      position={{lat:source.lat, lng:source.lng}}
+      icon={{
+        url:"/source.png",
+        scaledSize:{width:20, height:20}
+      }}
+       />:null}
+
+    {destination.length!=[]? <MarkerF
+      position={{lat:destination.lat, lng:destination.lng}}
+      icon={{
+        url:"/dest.png",
+        scaledSize:{width:20, height:20}
+      }}
+       />:null}       
     </GoogleMap>
-  ) : (
-    <></>
-  )
+  ) 
 }
 
 export default GoogleMapSection

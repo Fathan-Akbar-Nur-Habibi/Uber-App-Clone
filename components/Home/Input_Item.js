@@ -50,7 +50,7 @@ function Input_Item(type) {
         {/*<input type='text' placeholder={type=='source'?'Pickup Location':'Dropoff Location'} 
         className='bg-transparent w-full outline-none' /> */}
         <GooglePlacesAutocomplete
-        apiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY}
+    
             selectProps={{
               value,
               onChange: (place)=>{getLatAndLng(place, type);setValue(place)},
