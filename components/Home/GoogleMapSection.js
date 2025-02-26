@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { GoogleMap, MarkerF, useJsApiLoader } from '@react-google-maps/api'
+import { GoogleMap, MarkerF, OverlayView, useJsApiLoader } from '@react-google-maps/api'
 import { sources } from 'next/dist/compiled/webpack/webpack';
 import { DestinationContext } from '@/context/DestinationContext';
 
@@ -61,7 +61,7 @@ function GoogleMapSection() {
     <GoogleMap
       mapContainerStyle={containerStyle}
       center={center}
-      zoom={10}
+      zoom={11}
       onLoad={onLoad}
       onUnmount={onUnmount}
       options={{mapId:'this is my id'}}
@@ -72,7 +72,17 @@ function GoogleMapSection() {
         url:"/source.png",
         scaledSize:{width:20, height:20}
       }}
-       />:null}
+       >
+        <OverlayView
+        position={{lat:source.lat, lng:source.lng}}
+        mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+        >
+          <div className='p-2 bg-white font-bold inline-block'> 
+            <p className='text-black text-[18px]'>{source.label}</p>
+          </div>
+        </OverlayView>
+
+       </MarkerF>:null}
 
     {destination.length!=[]? <MarkerF
       position={{lat:destination.lat, lng:destination.lng}}
@@ -80,7 +90,16 @@ function GoogleMapSection() {
         url:"/dest.png",
         scaledSize:{width:20, height:20}
       }}
-       />:null}       
+       >
+         <OverlayView
+        position={{lat:destination.lat, lng:destination.lng}}
+        mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+        >
+          <div className='p-2 bg-white font-bold inline-block'> 
+            <p className='text-black text-[18px]'>{destination.label}</p>
+          </div>
+        </OverlayView>
+       </MarkerF>:null}       
     </GoogleMap>
   ) 
 }
