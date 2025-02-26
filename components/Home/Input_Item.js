@@ -1,11 +1,16 @@
 "use client"
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import Image from 'next/image'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
+import { SourceContext } from '@/context/SourceContext';
+import { DestinationContext } from '@/context/DestinationContext';
 
 function Input_Item(type) {
   const [value, setValue] = useState(null);
   const[placeholder, setPlaceholder] = useState(null);
+  const {source, setSource}=useContext(SourceContext); 
+  const {destination,setDestination}=useContext(DestinationContext); 
+
 
   useEffect(()=> { 
     type=='source'
@@ -19,7 +24,23 @@ function Input_Item(type) {
     service.getDetails ({placeId},(place, status) => { 
       if(status==='OK' && place.geometry && place.geometry.location) 
         { 
-        console.log(place.geometry.location.lat());
+        console.log(place.geometry.location.lng());
+        if(type=='source') 
+        {
+          setSource({
+            lat:place.geometry.location.lat(),
+            lng:place.geometry.location.lng(),
+            name:place.formatted_address,
+            label:place.name
+          })
+        }else { 
+          setDestination({
+            lat:place.geometry.location.lat(),
+            lng:place.geometry.location.lng(),
+            name:place.formatted_address,
+            label:place.name
+          })
+        }
       }
     })
   }
