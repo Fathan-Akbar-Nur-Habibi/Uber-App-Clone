@@ -78,6 +78,7 @@ function GoogleMapSection() {
     setMap(null)
   }, [])
 
+  
   return   (
     <GoogleMap
       mapContainerStyle={containerStyle}
