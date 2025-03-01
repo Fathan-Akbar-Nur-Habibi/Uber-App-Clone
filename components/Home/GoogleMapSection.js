@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { GoogleMap, MarkerF, OverlayView, useJsApiLoader } from '@react-google-maps/api'
+import { DirectionsRenderer, GoogleMap, MarkerF, OverlayView, useJsApiLoader } from '@react-google-maps/api'
 import { sources } from 'next/dist/compiled/webpack/webpack';
 import { DestinationContext } from '@/context/DestinationContext';
 
@@ -18,8 +18,9 @@ function GoogleMapSection() {
  //   id: 'google-map-script',
  //   googleMapsApiKey: 'YOUR_API_KEY'//process.env.NEXT_PUBLIC_GOOGLE_API_KEY,
  // })
-
+ 
   const [map, setMap] = React.useState(null)
+  const [directionRoute, setDirectionRoutePoints]=useState([]);
   useEffect(()=> { 
     if(sources ?.length!=[]&&map) { 
      map.panTo (
@@ -43,8 +44,28 @@ function GoogleMapSection() {
       lng:destination.lng
      }) 
     }
+    if(source.length!=[]&&destination.length!=[]) { 
+      directionRoute();
+    }
   }, [destination])
 
+
+  const directionRoute=()=> { 
+    const DirectionsService= new google.maps.DirectionsService();
+    
+    DirectionsService.route({ 
+      origin:{lat:source.lat, lng:source.lng},
+      destination:{LAT:destination.lat, lng:destination.lng},
+      travelMode:google.maps.TravelMode.DRIVING
+    }, (result, status)=> { 
+      if(status==google.maps.DirectionsStatus.OK) { 
+        setDirectionRoutePoints(result)
+      }
+      else { 
+        console.error('Error');
+      }
+    })
+  }
   const onLoad = React.useCallback(function callback(map) {
     // This is just an example of getting and using the map instance!!! don't just blindly copy!
     const bounds = new window.google.maps.LatLngBounds(center)
@@ -99,7 +120,18 @@ function GoogleMapSection() {
             <p className='text-black text-[18px]'>{destination.label}</p>
           </div>
         </OverlayView>
-       </MarkerF>:null}       
+       </MarkerF>:null}  
+
+      <DirectionsRenderer
+         directions={directionRoutePoints}
+         options={{
+          polylineOptions:{ 
+            strokeColor: '#000',
+            strokeWeight:5
+          },
+          suppressMarkers:true
+         }}
+      />   
     </GoogleMap>
   ) 
 }
